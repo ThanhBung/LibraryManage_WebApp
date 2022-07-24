@@ -1,0 +1,374 @@
+﻿<!DOCTYPE html>
+@using Web_Library_Manage.Models  
+<html>
+
+<head>
+    <title>List Books</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+          integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <style>
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5 {
+            font-family: "Raleway", sans-serif
+        }
+
+        .w3-quarter h4 {
+            position: absolute;
+            top: 240px;
+            font-weight: bold;
+            font-size: 40px;
+            color: white;
+        }
+
+        .w3-quarter img {
+            margin-bottom: -6px;
+            cursor: pointer
+        }
+
+            .w3-quarter img:hover {
+                opacity: 0.6;
+                transition: 0.3s
+            }
+        .activeCid{
+            font-weight: bold;
+            font-size: 20px;
+            color: black;
+        }
+    </style>
+</head>
+
+<body class="w3-light-grey">
+
+    <!-- Sidebar/menu -->
+    <nav class="w3-sidebar w3-bar-block w3-black w3-animate-right w3-top w3-text-light-grey w3-large"
+         style="z-index:3;width:250px;font-weight:bold;display:none;right:0;" id="mySidebar">
+        <h4 class="w3-bar-item w3-center w3-padding-16" style="background-color: yellow; color:black">Hello,  @(ViewBag.userLogin.Uname)</h4>
+        <a href="/Home/Logout" class="w3-bar-item w3-button w3-center w3-padding-16">LOGOUT</a>
+        <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button w3-center w3-padding-16">ABOUT ME</a>
+        <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button w3-center w3-padding-16">CONTACT</a>
+        <a href="javascript:void()" onclick="w3_close()" class="w3-bar-item w3-button w3-center w3-padding-32">CLOSE</a>
+    </nav>
+
+    <!-- Top menu on small screens -->
+    <header class="w3-container w3-top w3-white w3-xlarge w3-padding-16">
+        <div onclick="window.location.href='/Home/Home'">
+            <span class="w3-left w3-padding">Library Manage</span>
+        </div>
+        <div class="w3-right d-flex align-items-center">
+            <h4 class="text-uppercase mt-2">@(ViewBag.userLogin.Urole)</h4>
+            <a href="javascript:void(0)" class="w3-button w3-white" style="text-decoration: none;" onclick="w3_open()">☰</a>
+        </div>
+    </header>
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div class="w3-overlay w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu"
+         id="myOverlay"></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main w3-content" style="max-width:1600px;margin-top:83px">
+        <div class="d-flex" style="position:fixed; top:100px; right:25px">
+            <a href="/Home/ViewCart"><i style="font-size:30px" class="bi bi-cart"></i></a>
+            @if (ViewBag.sizeCart != null)
+            {
+                <p style="color:black;font-weight:bold">(@ViewBag.sizeCart)</p>
+            }
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <h1 class="p-3"><b>List Books&nbsp;<i class="bi bi-layout-text-sidebar-reverse"></i></b></h1>
+    </div>
+    <div class="d-flex">
+        <div class="ml-3 mb-3" style="width:170px">
+            <h3><b>Filter&nbsp;<i class="bi bi-funnel-fill"></i></b></h3>
+            <h5 class="mt-3">Category Name</h5>
+            @foreach (Category c in ViewBag.listCategory)
+            {
+                <a class="@(ViewBag.CurrentCid == c.Cid ? "activeCid" : "")" href="/Home/ListBooks/@c.Cid/@ViewBag.CurrentBstatus">@c.Cname</a><br />
+            }
+            <h5 class="mt-3">Book Status</h5>
+            <a class="@(ViewBag.CurrentBstatus == 1 ? "activeCid" : "")" href="/Home/ListBooks/@ViewBag.CurrentCid/1">Published</a><br />
+            <a class="@(ViewBag.CurrentBstatus == 0 ? "activeCid" : "")" href="/Home/ListBooks/@ViewBag.CurrentCid/0">Unpublished</a>
+            <button class="mt-3 btn btn-primary" onclick="window.location.href='/Home/ListBooks'"><i class="bi bi-arrow-clockwise">Refresh</i></button>
+        </div>
+        <div style="width:100%">
+            <!-- Pagination -->
+            @if (ViewBag.listBookByCid.Count != 0)
+            {
+                <div class="d-flex justify-content-between mb-1">
+                    <div class="w3-start">
+                        <div class="w3-bar">
+                            @if (ViewBag.CurrentPage != 1)
+                            {
+                                <a href="/Home/ListBooks/@ViewBag.CurrentCid/@ViewBag.CurrentBstatus/@(ViewBag.CurrentPage-1)" class="w3-bar-item w3-button w3-hover-black">«</a>
+                            }
+                            @for (int i = 1; i <= ViewBag.EndPage; i++)
+                            {
+                                <a href="/Home/ListBooks/@ViewBag.CurrentCid/@ViewBag.CurrentBstatus/@i" class="w3-bar-item @(i == ViewBag.CurrentPage ? "w3-black" : "") w3-button">@i</a>
+                            }
+                            @if (ViewBag.CurrentPage != ViewBag.EndPage)
+                            {
+                                <a href="/Home/ListBooks/@ViewBag.CurrentCid/@ViewBag.CurrentBstatus/@(ViewBag.CurrentPage+1)" class="w3-bar-item w3-button w3-hover-black">»</a>
+                            }
+                        </div>
+                    </div>
+                    <div class="mr-1 d-flex">
+                        <div>
+                            @if (ViewBag.add0 != null)
+                            {
+                                <p><b style="color: red">@ViewBag.add0</b></p>
+                            }
+                            @if (ViewBag.add1 != null)
+                            {
+                                <p><b style="color: green">@ViewBag.add1</b></p>
+                            }
+                            @if (ViewBag.delete1 != null)
+                            {
+                                <p><b style="color: green">@ViewBag.delete1</b></p>
+                            }
+                            @if (ViewBag.delete0 != null)
+                            {
+                                <p><b style="color: red">@ViewBag.delete0</b></p>
+                            }
+                        </div>
+                        <div>
+                            @if (ViewBag.userLogin.Urole == "admin")
+                            {
+                                <button class="btn btn-primary" data-toggle="modal" data-target="#ModalAddBook">Add Book</button>
+
+                            }
+                        </div>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Category Name</th>
+                            <th scope="col" >Book Name</th>
+                            <th scope="col">Book Image</th>
+                            <th scope="col">Book Quantity</th>
+                            <th scope="col">Book Cost</th>
+                            <th scope="col">Book Description</th>
+                            <th scope="col">Book Status</th>
+                            <th scope="col"><i style="font-size:25px" class="bi bi-bag-plus"></i></th>
+                            @if (ViewBag.userLogin.Urole == "admin")
+                            {
+                                <th scope="col">Edit</th>
+                                <th scope="col">Delete</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (Product p in ViewBag.listBookByCid)
+                        {
+                        <tr>
+                            <th scope="row">@p.Pid</th>
+                            @foreach (Category c in ViewBag.listCategory)
+                            {
+                                @if (c.Cid == p.Cid)
+                                {
+                                    <td>@c.Cname</td>
+                                }
+                            }
+                            <td>@p.Pname</td>
+                            <td><img src="@p.Pimg" alt="Product Image" style="width:200px" /></td>
+                            <td>@p.Pquantity</td>
+                            <td>@p.Pcost (VND)</td>
+                            <td>@p.Pdescription</td>
+                            @if (p.Pstatus == true)
+                            {
+                                <td><span style="color:green"><b>Published</b></span></td>
+                            }
+                            else
+                            {
+                                <td><span style="color:red"><b>Unpublished</b></span></td>
+                            }
+                            @if (p.Pstatus == true)
+                            {
+                                <td><a href="/Home/AddItem/@ViewBag.CurrentCid/@ViewBag.CurrentBstatus/@ViewBag.CurrentPage/@p.Pid"><i style="font-size:25px" class="bi bi-cart-plus"></i></a></td>
+                            }
+                            else
+                            {
+                                <td><b style="color:red">Unavailable</b></td>
+                            }
+                            @if (ViewBag.userLogin.Urole == "admin")
+                            {
+                                <td><a href="/Home/EditBook/0/2/1/@p.Pid"><i style="font-size:25px" class="bi bi-pencil-square"></i></a></td>
+                                <td><a href="/Home/DeleteBook/0/2/1/@p.Pid" onclick="return confirm('Are you sure to delete this Book?')"><i style="font-size:25px" class="bi bi-trash"></i></a></td>
+                            }
+
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+                <!-- Pagination -->
+                <div class="w3-start mt-1 mb-1">
+                    <div class="w3-bar">
+                        @if (ViewBag.CurrentPage != 1)
+                        {
+                            <a href="/Home/ListBooks/@ViewBag.CurrentCid/@ViewBag.CurrentBstatus/@(ViewBag.CurrentPage-1)" class="w3-bar-item w3-button w3-hover-black">«</a>
+                        }
+                        @for (int i = 1; i <= ViewBag.EndPage; i++)
+                        {
+                            <a href="/Home/ListBooks/@ViewBag.CurrentCid/@ViewBag.CurrentBstatus/@i" class="w3-bar-item @(i == ViewBag.CurrentPage ? "w3-black" : "") w3-button">@i</a>
+                        }
+                        @if (ViewBag.CurrentPage != ViewBag.EndPage)
+                        {
+                            <a href="/Home/ListBooks/@ViewBag.CurrentCid/@ViewBag.CurrentBstatus/@(ViewBag.CurrentPage+1)" class="w3-bar-item w3-button w3-hover-black">»</a>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <h4 style="margin:120px 0 0 570px"><b>Empty!</b></h4>
+            }
+        </div>
+    </div>
+
+    <div class="modal fade" id="ModalAddBook" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Book&nbsp;<i class="bi bi-book"></i></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="AddBook" method="post">
+                    <div class="modal-body">
+                            <div class="form-group">
+                                <label for="cname" class="col-form-label">Category:</label>
+                                <input list="listCategory" id="cname" required class="form-control" name="cname" placeholder="Choose..." />
+                                <datalist id="listCategory">
+                                    @foreach (Category c in ViewBag.listCategory)
+                                    {
+                                        <option value="@c.Cname"></option>
+                                    }
+                                </datalist>
+                            </div>
+                            <div class="form-group">
+                                <label for="bname" class="col-form-label">Book Name:</label>
+                                <input type="text" required class="form-control" id="bname" name="bname" placeholder="Enter...">
+                            </div>
+                            <div class="form-group">
+                                <label for="bquantity" class="col-form-label">Book Quantity:</label>
+                                <input type="number" required class="form-control" id="bquantity" name="bquantity" placeholder="Enter...">
+                            </div>
+                            <div class="form-group">
+                                <label for="bcost" class="col-form-label">Book Cost:</label>
+                                <input type="number" required class="form-control" id="bcost" name="bcost" placeholder="Enter...">
+                            </div>
+                            <div class="form-group">
+                                <label for="bdes" class="col-form-label">Book Description:</label>
+                                <textarea class="form-control" id="bdes" required name="bdes" placeholder="Enter..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="bimg" class="col-form-label">Book Image:</label>
+                                <input type="text" class="form-control" required id="bimg" name="bimg" placeholder="Enter...">
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+                        <input name="cid" hidden value="0" />
+                        <input name="bstatus" hidden value="2" />
+                        <input name="bpage" hidden value="1" />
+                        <button type="submit" onclick="return confirm('Are you sure to add this Book?')" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w3-container w3-padding-32 w3-grey">
+        <div class="w3-row-padding">
+            <div class="w3-third">
+                <h3>INFO</h3>
+                <p>
+                    This is a small library management system. Library Management is used for book management,
+                    librarian management, order management, and both borrowed and returned customers.
+                </p>
+            </div>
+
+            <div class="w3-third">
+                <h3>BLOG POSTS</h3>
+                <ul class="w3-ul">
+                    <li class="w3-padding-16 w3-hover-black"
+                        onclick="window.location.href='https://www.feedspot.com/infiniterss.php?_src=feed_title&followfeedid=4734800&q=site:http%3A%2F%2Fwww.noshelfrequired.com%2Ffeed%2F'">
+                        <img src="https://i1.feedspot.com/200/4734800.jpg?t=1644308182"
+                             class="w3-left w3-margin-right" style="width:50px">
+                        <span class="w3-large">No Shelf Required</span><br>
+                        <span>
+                            Portal on all aspects of ebooks and digital content and for all creating, reading,
+                            publishing...
+                        </span>
+                    </li>
+                    <li class="w3-padding-16 w3-hover-black"
+                        onclick="window.location.href='https://www.feedspot.com/infiniterss.php?_src=feed_title&followfeedid=35096&q=site:https%3A%2F%2Fwww.librarian.net%2Ffeed%2F'">
+                        <img src="https://i1.feedspot.com/200/35096.jpg?t=1604395915" class="w3-left w3-margin-right" style="width:50px">
+                        <span class="w3-large">Librarian</span><br>
+                        <span>
+                            Hi, My name is Jessamyn West and I'm a library technologist living in
+                            Vermont...
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="w3-third">
+                <h3>POPULAR TAGS</h3>
+                <img src="https://i.pinimg.com/564x/42/81/f1/4281f1ab348f8e71eefba010d277daeb.jpg" style="width:40px;border-radius: 90%;">
+                <img src="https://i.pinimg.com/564x/43/85/a5/4385a5479214954fa9fab6f1a778623f.jpg" style="width:40px;border-radius: 90%;">
+                <img src="https://i.pinimg.com/564x/88/aa/93/88aa93c7d7d0b4f3bb45a0c7ad8f9a4b.jpg" style="width:40px;border-radius: 90%;">
+            </div>
+        </div>
+    </footer>
+
+    <div class="w3-black w3-center w3-padding-24">
+        Powered by <a href="#" title="W3.CSS" target="_blank"
+                      class="w3-hover-opacity">Nhat Thanh</a>
+    </div>
+
+    <!-- End page content -->
+
+    <script>
+        // Script to open and close sidebar
+        function w3_open() {
+            document.getElementById("mySidebar").style.display = "block";
+            document.getElementById("myOverlay").style.display = "block";
+        }
+
+        function w3_close() {
+            document.getElementById("mySidebar").style.display = "none";
+            document.getElementById("myOverlay").style.display = "none";
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+</body>
+
+</html>
